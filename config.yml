@@ -1,0 +1,126 @@
+{
+    "api": {
+      "services": [
+        "HandlerService",
+        "LoggerService",
+        "StatsService"
+      ],
+      "tag": "api"
+    },
+    "inbounds": [
+      {
+        "listen": "127.0.0.1",
+        "port": 62789,
+        "protocol": "dokodemo-door",
+        "settings": {
+          "address": "127.0.0.1"
+        },
+        "tag": "api"
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vmess",
+        "settings": {
+          "vnext": [
+            {
+                "address": {{upstream-domain}},
+                "port": 443,
+                "users": [
+                  {
+                    "alterId": 0,
+                    "id": {{UUID}},
+                    "security": "auto"
+                  }
+                ]
+              }
+          ]
+        },
+        "streamSettings": {
+            "network": "ws",
+            "security": "tls",
+            "tlsSettings": {
+              "allowInsecure": true
+            },
+            "wsSettings": {
+              "path": "/ws"
+            }
+          },
+        "mux": {
+          "enabled": true
+        }
+      },
+      {
+        "tag": "freedom",
+        "protocol": "freedom",
+        "settings": {}
+      },
+      {
+        "protocol": "blackhole",
+        "settings": {},
+        "tag": "blocked"
+      },
+      {
+        "tag": "InternalDNS",
+        "protocol": "dns"
+    }
+    ],
+    "policy": {
+      "system": {
+        "statsInboundDownlink": true,
+        "statsInboundUplink": true
+      }
+    },
+    "dns": {
+      "servers": [
+          "8.8.8.8",
+          "1.1.1.1",
+          "localhost"
+      ]
+    },
+    "routing": {
+      "rules": [
+          {
+              "type": "field",
+              "outboundTag": "freedom",
+              "domain": [
+                "regexp:.*\\.ir$",
+                "digikala.com",
+                "snapp.express",
+                "aparat.com",
+                "full:google.com",
+                "overleaf.com"
+              ]
+          },
+          {
+            "type": "field",
+            "port": "53",
+            "network": "tcp,udp",
+            "outboundTag": "InternalDNS"
+          },
+        {
+          "inboundTag": [
+            "api"
+          ],
+          "outboundTag": "api",
+          "type": "field"
+        },
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "outboundTag": "blocked",
+          "type": "field"
+        },
+        {
+          "outboundTag": "blocked",
+          "protocol": [
+            "bittorrent"
+          ],
+          "type": "field"
+        }
+      ]
+    },
+    "stats": {}
+  }
