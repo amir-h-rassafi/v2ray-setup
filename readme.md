@@ -54,6 +54,10 @@ How should I config them?
 ##### UPSTREAM :
 you need to create a vmess account on upstream through panel with localhost, websocket and path /ws (check img)
 
+<div align="center">
+<img src="./upstream-ws-vmess.png">
+</div>
+
 then config nginx as reverse proxy (check nginx.conf and use it on `/etc/nginx/sites-enabled/default`)
 
 ##### BRIDGE :
