@@ -28,6 +28,8 @@ services:
     network_mode: host
 ```
 
+`docker-compose -f docker-compose-xui.yml up -d`
+
 _panel will set up on port 54321 , user:admin, pass:admin_
 
 ----------------------------------------------------
