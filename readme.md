@@ -45,7 +45,7 @@ then add an A record on dns with upstream IP and domain name.
 
 after that you need to sign with 
 ```
-certbot --nginx -d {domain}
+certbot --nginx -d {{domain}}
 ```
 ----------------------------------------------------
 
