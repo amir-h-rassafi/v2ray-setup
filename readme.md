@@ -1,4 +1,4 @@
-## [V2Ray](v2ray.com) Setup
+## [V2Ray](https://www.v2ray.com/) Setup
 
 
 In this repo we will setup v2ray with [x-ui](https://github.com/vaxilu/x-ui) dashboards
