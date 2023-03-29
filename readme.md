@@ -65,5 +65,8 @@ then create account on bridge and enjoy!!!
 
 TODO:
 
-1 - add cloudflare proxy config
-2 - add some script for automation
+1 - add cloudflare proxy config.
+
+2 - add some script for automation.
+
+3 - create some dockerfile to deploy easily on cloud envs.
