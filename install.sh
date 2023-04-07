@@ -5,4 +5,4 @@ sudo apt install nginx python3-certbot-nginx -y
 docker-compose -f docker-compose-xui.yml up -d
 
 ip=$(curl -s ifconfig.io)
-echo "Your Ip is:  \033[1m${ip}\033[0m , please set domain !!!"
+echo "Your Ip is:  $ip , please set domain !!!"
