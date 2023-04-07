@@ -66,7 +66,13 @@ you need to complete config.yml with UID, HOST, PORT and put the config on x-ui 
 then create account on bridge and enjoy!!!
 
 ----------------------------------------------------
+### Installation
 
+For upstream you can use `install.sh`
+
+
+
+----------------------------------------------------
 TODO:
 
 1 - add cloudflare proxy config.
