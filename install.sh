@@ -12,7 +12,7 @@ echo "Your Ip is:  $ip , please give me domain:"
 read domain
 cp ./nginx.conf default
 sed -i "s/{{domain}}/$domain/g" default
-sed -i "s/certificate*/d" default
+sed -i "/certificate*/d" default
 cp default /etc/nginx/sites-enabled/default
 certbot --nginx -d $domain
 sudo service nginx restart
