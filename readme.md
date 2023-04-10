@@ -68,7 +68,9 @@ then create account on bridge and enjoy!!!
 ----------------------------------------------------
 ### Installation
 
-For upstream you can use `install.sh`
+make all
+
+for more details run make help
 
 
 
