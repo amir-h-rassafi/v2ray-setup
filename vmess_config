@@ -1,0 +1,32 @@
+{
+        "tag": "proxy",
+        "protocol": "vmess",
+        "settings": {
+          "vnext": [
+            {
+                "address": "DOMAIN",
+                "port": 443,
+                "users": [
+                  {
+                    "alterId": 0,
+                    "id": "UID",
+                    "security": "auto"
+                  }
+                ]
+              }
+          ]
+        },
+        "streamSettings": {
+            "network": "ws",
+            "security": "tls",
+            "tlsSettings": {
+              "allowInsecure": false
+            },
+            "wsSettings": {
+              "path": "/ws"
+            }
+          },
+        "mux": {
+          "enabled": true
+        }
+}

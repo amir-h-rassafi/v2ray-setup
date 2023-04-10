@@ -1,6 +1,6 @@
 echo "Install dependencies"
 sudo apt update
-sudo apt install docker.io docker-compose -y
+sudo apt install docker.io docker-compose make -y
 sudo apt install certbot nginx python3-certbot-nginx -y
 docker-compose -f docker-compose-xui.yml up -d
 
@@ -16,3 +16,4 @@ sed -i "s/{{domain}}/$domain/g" default
 cp default /etc/nginx/sites-enabled/default
 sudo service nginx restart
 echo "Now check your domain!!SSL signing done!"
+echo "Let's create vmess account!"
