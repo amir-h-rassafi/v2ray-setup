@@ -11,7 +11,7 @@ all:
 
 install:
 	sudo apt update
-	sudo apt install docker.io docker-compose make curl -y
+	sudo apt install docker.io docker-compose curl -y
 	sudo apt install certbot nginx python3-certbot-nginx -y
 
 xui: 
@@ -21,14 +21,14 @@ disable_firewall:
 	sudo ufw disable
 
 sign:
-	ip=$(curl -s ifconfig.io)
-	echo "Your Ip is:  $ip , please give me domain:"
-	read domain
-	touch $$domain
-	certbot --nginx -d $$domain
-	cp ./nginx.conf default
-	sed -i "s/{{domain}}/$$domain/g" default
-	cp default /etc/nginx/sites-enabled/default
+	$(eval ip := $(shell curl -s ifconfig.io))
+	@echo "Your Ip is:  $(ip) , please give me domain:"
+	@read domain; \
+	touch $$domain \
+	certbot --nginx -d $$domain \
+	cp ./nginx.conf default \
+	sed -i "s/{{domain}}/$$domain/g" default \
+	cp default /etc/nginx/sites-enabled/default \
 	sudo service nginx restart
 
 xui_login:
