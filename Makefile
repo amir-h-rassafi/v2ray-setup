@@ -1,14 +1,8 @@
-.PHONY: install xui disable_firewall sign xui_login  help
 
 xui_session :=
 UID :=
 
-run:
-	install
-	xui
-	disable_firewall
-	sign
-	xui_login_add
+run: install xui disable_firewall sign xui_login_add
 
 install:
 	sudo apt update
