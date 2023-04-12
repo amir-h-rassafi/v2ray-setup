@@ -1,13 +1,14 @@
+.PHONY: install xui disable_firewall sign xui_login  help
+
 xui_session :=
 UID :=
 
-all:
+run:
 	install
 	xui
 	disable_firewall
 	sign
-	xui_login
-	add
+	xui_login_add
 
 install:
 	sudo apt update
@@ -22,15 +23,12 @@ disable_firewall:
 
 sign:
 	sh sign.sh
-	
-xui_login:
+
+xui_login_add:
 	$(eval xui_session := $(shell curl -c - 'http://localhost:54321/login' \
 	-H 'Accept: application/json, text/plain, */*' \
 	--data-raw 'username=admin&password=admin' \
 	--compressed -s | awk '{print $$7}' | grep -oE '[a-zA-Z0-9_-]+$$'))
-
-add:
-	xui_login
 	$(eval UID := $(shell uuidgen))
 	@curl 'http://localhost:54321/xui/inbound/add' \
 	-H 'Accept: application/json, text/plain, */*' \
@@ -47,6 +45,5 @@ help:
 	@echo " - xui"
 	@echo " - disable_firewall"
 	@echo " - sign"
-	@echo " - xui_login"
-	@echo " - add"
+	@echo " - xui_login_add"
 	@echo " - run"
