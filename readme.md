@@ -79,7 +79,7 @@ TODO:
 
 1 - add cloudflare proxy config.
 
-2 - add some script for automation.
+2 - add some script for automation(print qr code / add function to get config from makefile).
 
 3 - create some dockerfile to deploy easily on cloud envs.
 
