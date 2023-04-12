@@ -21,16 +21,8 @@ disable_firewall:
 	sudo ufw disable
 
 sign:
-	$(eval ip := $(shell curl -s ifconfig.io))
-	@echo "Your Ip is:  $(ip) , please give me domain:"
-	@read domain; \
-	touch $$domain \
-	certbot --nginx -d $$domain \
-	cp ./nginx.conf default \
-	sed -i "s/{{domain}}/$$domain/g" default \
-	cp default /etc/nginx/sites-enabled/default \
-	sudo service nginx restart
-
+	sh sign.sh
+	
 xui_login:
 	$(eval xui_session := $(shell curl -c - 'http://localhost:54321/login' \
 	-H 'Accept: application/json, text/plain, */*' \
