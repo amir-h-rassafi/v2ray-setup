@@ -68,7 +68,7 @@ then create account on bridge and enjoy!!!
 ----------------------------------------------------
 ### Installation
 
-make all
+make run
 
 for more details run make help
 
