@@ -72,16 +72,36 @@ make run
 
 for more details run make help
 
-
+----------------------------------------------------
+### Extra
+-> Use cloudflare CDN
+1 - Go to SSL/TLS configuration => Overview on panel and choose full(strict) mode
+2 - Go to SSL/TLS configuration => Origin Server on panel and create ssl cert.pem and key.pem
+3 - copy cert.pem and key.pem (step 2) onto server and change nginx config like following configs
+```
+    ssl_certificate /etc/letsencrypt/live/{{domain}}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{domain}}/privkey.pem; # managed by Certbot
+``` 
+TO
+```
+    ssl_certificate /{{cert path}}/cert.pem; 
+    ssl_certificate_key /{{key path}}/key.pem;
+```
+4 - reload nginx config with following command:
+```
+sudo nginx -t
+```
+if all things was ok then run
+```
+sudo nginx -s reload
+```
 
 ----------------------------------------------------
 TODO:
 
-1 - add cloudflare proxy config.
+1 - automate cloudflare cdn config.
 
-2 - add some script for automation(print qr code / add function to get config from makefile).
-
-3 - create some dockerfile to deploy easily on cloud envs.
+2 - create some dockerfile to deploy easily on cloud envs.
 
 -----------------------------------------------------
 Related Links:
