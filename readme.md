@@ -73,8 +73,7 @@ make run
 for more details run make help
 
 ----------------------------------------------------
-### Extra
--> Use cloudflare CDN
+### Extra (Use cloudflare CDN)
 
 1 - Go to SSL/TLS configuration => Overview on panel and choose full(strict) mode
 
