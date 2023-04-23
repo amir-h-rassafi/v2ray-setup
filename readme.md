@@ -104,6 +104,14 @@ if all things was ok then run
 ```
 sudo nginx -s reload
 ```
+----------------------------------------------------
+### Need self signed certificate?
+
+```
+openssl genrsa -out key.pem 2048 //private key
+openssl req -new -key key.pem -x509 -days 365 -out cert.pem //cert fil
+````
+
 
 ----------------------------------------------------
 TODO:
@@ -115,4 +123,5 @@ TODO:
 -----------------------------------------------------
 Related Links:
  - https://seakfind.github.io/2021/10/10/X-UI/#Add-VLESS-XTLS-Xray-User
+ 
  - Plz check https://github.com/v2rayhub
