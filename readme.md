@@ -120,6 +120,8 @@ TODO:
 
 2 - create some dockerfile to deploy easily on cloud envs.
 
+3 - Add shecan for pulling image in Iran.
+
 -----------------------------------------------------
 Related Links:
  - https://seakfind.github.io/2021/10/10/X-UI/#Add-VLESS-XTLS-Xray-User
