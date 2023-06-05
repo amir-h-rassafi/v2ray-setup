@@ -112,6 +112,14 @@ openssl genrsa -out key.pem 2048 //private key
 openssl req -new -key key.pem -x509 -days 365 -out cert.pem //cert fil
 ````
 
+----------------------------------------------------
+### Change congestion control Algorithm
+Plz add following config into `/etc/sysctl.conf`
+```
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+```
+Then run `sysctl -p`
 
 ----------------------------------------------------
 TODO:
