@@ -137,3 +137,5 @@ Related Links:
  - Plz check https://github.com/v2rayhub
 
  - https://github.com/MHSanaei/3x-ui/blob/main/docker-compose.yml
+
+ - https://www.speedtest.net/apps/cli
