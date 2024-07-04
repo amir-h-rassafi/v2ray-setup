@@ -231,3 +231,5 @@ Feel free to manage your accounts just over the client server!
 ```bash
 openssl s_client -connect {STUNNEL_SERVER/CLIENT}:4443 -debug -msg -servername cloudflare.com -tls1_2 
 ```
+
+3 - Check firewall
