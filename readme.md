@@ -233,3 +233,5 @@ openssl s_client -connect {STUNNEL_SERVER/CLIENT}:4443 -debug -msg -servername c
 ```
 
 3 - Check firewall
+
+4 - `iftop, tcpdump, telnet, ss, nc` is general helpful network tools
