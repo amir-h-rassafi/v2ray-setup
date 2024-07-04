@@ -220,3 +220,14 @@ Notice that in client config you should use `localhost:4443` rather than server 
 ```
 
 Feel free to manage your accounts just over the client server!
+
+
+## Debug
+
+1 - use `journalctl -fu stunnel4.service` to check related logs
+
+2 - to check your stunnel server you can use following command:
+
+```bash
+openssl s_client -connect {STUNNEL_SERVER/CLIENT}:4443 -debug -msg -servername cloudflare.com -tls1_2 
+```
