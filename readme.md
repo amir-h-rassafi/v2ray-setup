@@ -1,141 +1,222 @@
-## [V2Ray](https://www.v2ray.com/) Setup
+## [V2Ray](https://www.v2ray.com/) Setup + STUNNEL
+(Before start check __other branches__ for other setups)
+![img.png](img.png)
+
+https://charlesreid1.github.io/stunnel.html
 
 
-In this repo we will setup v2ray with [x-ui](https://github.com/vaxilu/x-ui) dashboards
+### What Does Stunnel Do?
 
+Stunnel is a tool for creating SSL tunnels between a client and a server.
 
-client  **⇨**  (shadowsocks, vmess) **⇨** bridge(xui) **⇨** tls-vmess **⇨** upstream(nginx(SSL) -> xui)
+### Setup
+As you see in above photo we will setup stunnel as our secure tunnel and pass v2ray traffic over it.
+(__Local Services__ in above photo in this case is __v2ray node__)
 
-what we need for setup?
+### Steps
 
-1 - domain (preferred to handle with cloudflare)
-2 - two vps (bridge, upstream)
+1 - Run `install.sh` to install requirements in each VPS.(we can not run them on pods as we are using `systemctl`)
 
-------------------------------------------------
-
-on **bridge** just need need to setup this!
-
-simple `docker-compose.yml` for setup xui 
-```
-version: "3"
-services:
-  xui:
-    image: enwaiax/x-ui
-    container_name: xui
-    volumes:
-      - $PWD/db/:/etc/x-ui/
-      - $PWD/cert/:/root/cert/
-    network_mode: host
-```
-
-`docker-compose -f docker-compose-xui.yml up -d`
-
-_panel will set up on port 54321 , user:admin, pass:admin_
-
-----------------------------------------------------
-
-on upstream you need to have nginx & certbot also installed
-
-```
-sudo apt-get update
-sudo apt-get install nginx certbot python3-certbot-nginx
+2 - Setup stunnel `server-side`:
+```Bash
+cd v2ray-setup
+vim server.conf # Modify V2RAY-PORT to a real free port like 9999
+cp server.conf /etc/stunnel/
+cd /etc/stunnel/
+openssl genrsa -out stunnel.key 2048
+# Please avoid to use some random stuff like test.
+openssl req -new -key stunnel.key -out stunnel.csr
+openssl x509 -req -days 365 -in stunnel.csr -signkey stunnel.key -out stunnel.crt
+cat stunnel.crt stunnel.key > stunnel.pem # You need to use it in client as well
+sudo systemctl restart stunnel4.service
+systemctl status stunnel4.service # You should see everything is fine
 ```
 
-then add an A record on dns with upstream IP and domain name.
-
-after that you need to sign with 
-```
-certbot --nginx -d {{domain}}
-```
-----------------------------------------------------
-
-How should I config them?
-
-##### UPSTREAM :
-you need to create a vmess account on upstream through panel with localhost, websocket and path /ws (check img)
-
-<div align="center">
-<img src="./upstream-ws-vmess.png">
-</div>
-
-then config nginx as reverse proxy (check nginx.conf and use it on `/etc/nginx/sites-enabled/default`)
-
-##### BRIDGE :
-you need to complete config.yml with UID, HOST, PORT and put the config on x-ui panel of bridge.
-
-then create account on bridge and enjoy!!!
-
-----------------------------------------------------
-### Installation
-
-make run
-
-for more details run make help
-
-----------------------------------------------------
-### Extra (Use cloudflare CDN)
-
-1 - Go to SSL/TLS configuration => Overview on panel and choose full(strict) mode
-
-2 - Go to SSL/TLS configuration => Origin Server on panel and create ssl cert.pem and key.pem
-
-3 - copy cert.pem and key.pem (step 2) onto server and change nginx config like following configs
-
-```
-    ssl_certificate /etc/letsencrypt/live/{{domain}}/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/{{domain}}/privkey.pem; # managed by Certbot
-``` 
-
-TO
-
-```
-    ssl_certificate /{{cert path}}/cert.pem; 
-    ssl_certificate_key /{{key path}}/key.pem;
+2 - Setup stunnel `client-side`:
+```Bash
+cd v2ray-setup
+vim client.conf # Use your server ip in the config
+cp client.conf /etc/stunnel/
+scp {STUNNEL_SERVER}:/etc/stunnel/stunnel.pem /etc/stunnel/stunnel.pem
+sudo systemctl restart stunnel4.service
+systemctl status stunnel4.service # You should see everything is fine
 ```
 
-4 - reload nginx config with following command:
+3 - Setup x-ui in server (on stunnel VPS) and create an account there with a port listening to `V2RAY-PORT` like 9999
 
+Sample config(default)
+```json
+{
+  "api": {
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 62789,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "api"
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "blocked"
+    }
+  ],
+  "policy": {
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true
+    }
+  },
+  "routing": {
+    "rules": [
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      },
+      {
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "blocked",
+        "type": "field"
+      },
+      {
+        "outboundTag": "blocked",
+        "protocol": [
+          "bittorrent"
+        ],
+        "type": "field"
+      }
+    ]
+  },
+  "stats": {}
+}
 ```
-sudo nginx -t
+4 - setup x-ui in client
+
+Notice that in client config you should use `localhost:4443` rather than server ip, port like following:
+```json
+{
+  "api": {
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 62789,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "api"
+    }
+  ],
+  "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vmess",
+        "settings": {
+          "vnext": [
+             {
+            "address": "localhost",
+            "port": 4443,
+            "users": [
+              {
+                "alterId": 0,
+                "encryption": "",
+                "flow": "",
+                "id": "{VMESS-ID}",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
+      },
+      "tag": "proxy"
+    },
+
+    {
+      "protocol": "blackhole",
+      "settings": { },
+      "tag": "blocked"
+    },
+    {
+      "tag": "InternalDNS",
+      "protocol": "dns"
+    }
+  ],
+  "policy": {
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true
+    }
+  },
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "freedom",
+        "domain": [
+          "regexp:.*\\.ir$",
+          "domain:digikala.com",
+          "snapp.express",
+          "aparat.com",
+          "full:google.com",
+          "overleaf.com",
+        ]
+      },
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      },
+      {
+        "outboundTag": "blocked",
+        "protocol": [
+          "bittorrent"
+        ],
+        "type": "field"
+      }
+    ]
+  },
+  "stats": { }
+}
 ```
 
-if all things was ok then run
-
-```
-sudo nginx -s reload
-```
-----------------------------------------------------
-### Need self signed certificate?
-
-```
-openssl genrsa -out key.pem 2048 //private key
-openssl req -new -key key.pem -x509 -days 365 -out cert.pem //cert fil
-````
-
-----------------------------------------------------
-### Change congestion control Algorithm
-Plz add following config into `/etc/sysctl.conf`
-```
-net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr
-```
-Then run `sysctl -p`
-
-----------------------------------------------------
-TODO:
-
-1 - automate cloudflare cdn config.
-
-2 - create some dockerfile to deploy easily on cloud envs.
-
-3 - Add shecan for pulling image in Iran.
-
------------------------------------------------------
-Related Links:
- - https://seakfind.github.io/2021/10/10/X-UI/#Add-VLESS-XTLS-Xray-User
- 
- - Plz check https://github.com/v2rayhub
-
- - https://github.com/MHSanaei/3x-ui/blob/main/docker-compose.yml
-
- - https://www.speedtest.net/apps/cli
+Feel free to manage your accounts just over the client server!

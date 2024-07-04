@@ -1,9 +1,0 @@
-version: "3"
-services:
-  xui:
-    image: enwaiax/x-ui
-    container_name: xui
-    volumes:
-      - $PWD/db/:/etc/x-ui/
-      - $PWD/cert/:/root/cert/
-    network_mode: host
