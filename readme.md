@@ -17,6 +17,8 @@ frp is a fast reverse proxy that allows you to expose a local server located beh
 
 FRP GITHUB: https://github.com/fatedier/frp
 
+### Architecture Overview
+![arch.png](arch.png)
 ### Setup
 As you see in above photo we will setup stunnel as our secure tunnel and pass v2ray traffic over it.
 (__Local Services__ in above photo in this case is __v2ray node__)
