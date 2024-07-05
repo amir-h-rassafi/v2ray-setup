@@ -1,4 +1,4 @@
-## [V2Ray](https://www.v2ray.com/) Setup + STUNNEL
+## [V2Ray](https://www.v2ray.com/) Setup + STUNNEL + FRP
 (Before start check __other branches__ for other setups)
 ![img.png](img.png)
 
@@ -9,6 +9,14 @@ https://charlesreid1.github.io/stunnel.html
 
 Stunnel is a tool for creating SSL tunnels between a client and a server.
 
+STUNNEL GITHUB: https://github.com/mtrojnar/stunnel
+
+### What is frp?
+
+frp is a fast reverse proxy that allows you to expose a local server located behind a NAT or firewall to the Internet. It currently supports TCP and UDP, as well as HTTP and HTTPS protocols, enabling requests to be forwarded to internal services via domain name.
+
+FRP GITHUB: https://github.com/fatedier/frp
+
 ### Setup
 As you see in above photo we will setup stunnel as our secure tunnel and pass v2ray traffic over it.
 (__Local Services__ in above photo in this case is __v2ray node__)
@@ -17,7 +25,7 @@ As you see in above photo we will setup stunnel as our secure tunnel and pass v2
 
 1 - Run `install.sh` to install requirements in each VPS.(we can not run them on pods as we are using `systemctl`)
 
-2 - Setup stunnel `server-side`:
+2 - Setup stunnel `server-node`:
 ```Bash
 cd v2ray-setup
 vim server.conf # Modify V2RAY-PORT to a real free port like 9999
@@ -32,7 +40,36 @@ sudo systemctl restart stunnel4.service
 systemctl status stunnel4.service # You should see everything is fine
 ```
 
-2 - Setup stunnel `client-side`:
+3 - Setup frpc on `server-node`:
+
+```Bash
+wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_amd64.tar.gz
+tar -xvf frp_0.58.1_linux_amd64.tar.gz
+cd frp_0.58.1_linux_amd64
+```
+
+Adjust `frpc.toml` as following:
+
+```Bash
+serverAddr = "{client-node IP/domain}"
+serverPort = 7000 # Default
+
+[[proxies]]
+name = "test-tcp"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 443 # This is stunnel server listening port
+remotePort = 4444 # Expected port in client node.
+```
+
+Then run :
+```Bash
+./frpc -c frpc.toml
+```
+
+Or define a systemd service and enable/start it.
+
+4 - Setup stunnel `client-node`:
 ```Bash
 cd v2ray-setup
 vim client.conf # Use your server ip in the config
@@ -42,7 +79,25 @@ sudo systemctl restart stunnel4.service
 systemctl status stunnel4.service # You should see everything is fine
 ```
 
-3 - Setup x-ui in server (on stunnel VPS) and create an account there with a port listening to `V2RAY-PORT` like 9999
+5 - Setup frps on `client-node`:
+
+```Bash
+wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_amd64.tar.gz
+tar -xvf frp_0.58.1_linux_amd64.tar.gz
+cd frp_0.58.1_linux_amd64
+```
+
+Then run :
+```Bash
+./frps -c frps.toml
+```
+
+Or again define a systemd service and enable/start it.
+
+
+Note: Defining a systemd service help you to install the service in your machine more stable
+
+6 - Setup x-ui in server (on stunnel VPS) and create an account there with a port listening to `V2RAY-PORT` like 9999
 
 Sample config(default)
 ```json
@@ -224,7 +279,7 @@ Feel free to manage your accounts just over the client server!
 
 ## Debug
 
-1 - use `journalctl -fu stunnel4.service` to check related logs
+1 - use `journalctl -fu stunnel4.service` to check related logs(Or other logs like frpc/frps)
 
 2 - to check your stunnel server you can use following command:
 
@@ -234,4 +289,4 @@ openssl s_client -connect {STUNNEL_SERVER/CLIENT}:4443 -debug -msg -servername c
 
 3 - Check firewall
 
-4 - `iftop, tcpdump, telnet, ss, nc` is general helpful network tools
+4 - `iftop, tcpdump, telnet, ss, nc` are general helpful network tools
