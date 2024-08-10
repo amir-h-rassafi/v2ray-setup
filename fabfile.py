@@ -84,5 +84,16 @@ def setup_internal_node(internal, external_address):
 	internal.sudo('systemctl enable frps.service')
 	internal.sudo('systemctl start frps.service')
 
-#Todo, backup x-ui db
+
+@task
+def backup_xui_db(c, dest_path):
+	c.sudo('cp /etc/x-ui/xui-db.db /tmp/xui.db')
+	c.get('/tmp/xui.db', dest_path)
+
+@task
+def xui_db_restore(c, db_path):
+	c.sudo('chown $USER:$USER /etc/x-ui/x-ui.db')
+	c.put(db_path, '/etc/x-ui/x-ui.db')
+
+#Todo refactor
 #Todo, add task to documentation
