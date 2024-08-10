@@ -1,0 +1,13 @@
+[Unit]
+Description=Reverse tunnel service
+After=network.target
+
+[Service]
+ExecStart={exec-start}
+Restart=on-failure
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

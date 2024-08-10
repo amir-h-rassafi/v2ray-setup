@@ -1,0 +1,30 @@
+serverAddr = "{internal-node-ip}"
+serverPort = 7000
+
+[[proxies]]
+name = "tcp1"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 443
+remotePort = 4444
+
+[[proxies]]
+name = "tcp1"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 443
+remotePort = 4445
+
+[[proxies]]
+name = "tcp1"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 443
+remotePort = 4446
+
+[[proxies]]
+name = "tcp1"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 443
+remotePort = 4447
