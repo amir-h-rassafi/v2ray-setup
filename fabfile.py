@@ -90,10 +90,11 @@ def backup_xui_db(c, dest_path):
 	c.sudo('cp /etc/x-ui/xui-db.db /tmp/xui.db')
 	c.get('/tmp/xui.db', dest_path)
 
+
 @task
 def xui_db_restore(c, db_path):
 	c.sudo('chown $USER:$USER /etc/x-ui/x-ui.db')
 	c.put(db_path, '/etc/x-ui/x-ui.db')
 
-#Todo refactor
-#Todo, add task to documentation
+# Todo refactor
+# Todo, add task to documentation
