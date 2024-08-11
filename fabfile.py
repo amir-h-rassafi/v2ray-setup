@@ -86,15 +86,15 @@ def setup_internal_node(internal, external_address):
 
 
 @task
-def backup_xui_db(c, dest_path):
+def backup_xui_db(c, path):
 	c.sudo('cp /etc/x-ui/xui-db.db /tmp/xui.db')
-	c.get('/tmp/xui.db', dest_path)
+	c.get('/tmp/xui.db', path)
 
 
 @task
-def xui_db_restore(c, db_path):
+def restore_xui_db(c, path):
 	c.sudo('chown $USER:$USER /etc/x-ui/x-ui.db')
-	c.put(db_path, '/etc/x-ui/x-ui.db')
+	c.put(path, '/etc/x-ui/x-ui.db')
 
 # Todo refactor
 # Todo, add task to documentation
