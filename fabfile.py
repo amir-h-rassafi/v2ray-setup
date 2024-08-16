@@ -20,11 +20,11 @@ def setup_external_node(c, internal_node_ip, v2ray_port=8081, recreate_stunnel_s
 	except Exception as e:
 		print(e)
 	if secret is None or recreate_stunnel_secret:
-		c.run('cd /etc/stunnel/')
-		c.run('openssl genrsa -out stunnel.key 2048')
-		c.run('openssl req -new -key stunnel.key -out stunnel.csr')
-		c.run('openssl x509 -req -days 365 -in stunnel.csr -signkey stunnel.key -out stunnel.crt')
-		c.run('cat stunnel.crt stunnel.key > stunnel.pem')
+		
+		c.run('openssl genrsa -out /etc/stunnel/stunnel.key 2048')
+		c.run('openssl req -new -key /etc/stunnel/stunnel.key -out /etc/stunnel/stunnel.csr')
+		c.run('openssl x509 -req -days 365 -in /etc/stunnel/stunnel.csr -signkey /etc/stunnel/stunnel.key -out /etc/stunnel/stunnel.crt')
+		c.run('cat /etc/stunnel/stunnel.crt /etc/stunnel/stunnel.key > /etc/stunnel/stunnel.pem')
 		with open('server.conf', 'r') as stunnel_server_conf:
 			stunnel_server = stunnel_server_conf.read()
 			stunnel_server = stunnel_server.replace('{V2RAY-PORT}', f'{v2ray_port}')
