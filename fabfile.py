@@ -94,6 +94,7 @@ def backup_xui_db(c, path):
 @task
 def restore_xui_db(c, path):
 	c.sudo('chown $USER:$USER /etc/x-ui/x-ui.db')
+	c.sudo('chmod 744 /etc/x-ui')
 	c.put(path, '/etc/x-ui/x-ui.db')
 	c.sudo('systemctl restart x-ui')
 # Todo refactor
