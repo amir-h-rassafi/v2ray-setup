@@ -20,7 +20,6 @@ def setup_external_node(c, internal_node_ip, v2ray_port=8081, recreate_stunnel_s
 	except Exception as e:
 		print(e)
 	if secret is None or recreate_stunnel_secret:
-		
 		c.run('openssl genrsa -out /etc/stunnel/stunnel.key 2048')
 		c.run('openssl req -new -key /etc/stunnel/stunnel.key -out /etc/stunnel/stunnel.csr')
 		c.run('openssl x509 -req -days 365 -in /etc/stunnel/stunnel.csr -signkey /etc/stunnel/stunnel.key -out /etc/stunnel/stunnel.crt')
@@ -42,9 +41,9 @@ def setup_external_node(c, internal_node_ip, v2ray_port=8081, recreate_stunnel_s
 		frpc_toml_conf = frpc_toml_conf.replace("{internal-node-ip}", f'{internal_node_ip}')
 	with open('/tmp/frpc.toml', 'w') as file:
 		file.write(frpc_toml_conf)
-		
-		relative = pathlib.Path('v2ray_setup/frp/frpc.toml')
-		c.put('/tmp/frpc.toml', str(base_path / relative))
+
+	relative = pathlib.Path('v2ray_setup/frp/frpc.toml')
+	c.put('/tmp/frpc.toml', str(base_path / relative))
 	with open('frp.service', 'r') as file:
 		content = file.read()
 		content = content.replace('{exec-start}',
@@ -83,6 +82,7 @@ def setup_internal_node(internal, external_address):
 	internal.put('/tmp/frps.service', '/etc/systemd/system/frps.service')
 	internal.sudo('systemctl enable frps.service')
 	internal.sudo('systemctl start frps.service')
+	internal.sudo('systemctl status frps.service')
 
 
 @task
