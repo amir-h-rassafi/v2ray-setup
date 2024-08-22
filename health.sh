@@ -2,6 +2,16 @@
 # Please define an http proxy on xui pannel for this reason
 hstatus=$(curl 'https://www.whatsapp.com' --proxy "http://{user}:{password}@{host}:{port}" --max-time 15 -s -o /dev/null -w "%{http_code}")
 echo $hstatus
+
+start_time=$(date +%s.%N)
+
+
+end_time=$(date +%s.%N)
+
+duration=$(echo "$end_time - $start_time" | bc)
+
+echo "Duration: $duration seconds to fetch"
+
 if [ "$hstatus" -eq 200 ]; then
 	echo "Whatsapp web fetched successfully";
 else
