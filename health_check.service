@@ -1,0 +1,8 @@
+[Unit]
+Description=Health check
+
+[Service]
+ExecStart=/path/to/health.sh
+StandardOutput=journal
+StandardError=journal
+

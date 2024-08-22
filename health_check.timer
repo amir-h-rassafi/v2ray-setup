@@ -1,0 +1,11 @@
+[Unit]
+Description=Health check every 5s
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=health_check.service
+
+[Install]
+WantedBy=timers.target
+
