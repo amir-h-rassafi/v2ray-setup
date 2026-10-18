@@ -2,3 +2,10 @@ default
 tags
 .idea
 venv
+
+# rotation pipeline
+rotation/config.env
+rotation/backups/
+rotation/logs/
+rotation/bin/
+__pycache__/
