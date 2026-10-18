@@ -1,6 +1,6 @@
 # Current architecture: 3x-ui + Xray, CDN-fronted, rotating node
 
-This replaces the older STUNNEL + FRP setup described in the main [readme](../readme.md), which is kept for reference.
+This replaces the older STUNNEL + FRP setup described in the [`v1-stunnel-frp`](https://github.com/amir-h-rassafi/v2ray-setup/tree/v1-stunnel-frp) branch.
 Everything here uses placeholders: `cdn.example.com` (proxied through the CDN), `direct.example.com` (DNS-only),
 `203.0.113.10` (a "clean" CDN edge IP). Paths, ports, UUIDs and keys are your own; never commit them.
 
