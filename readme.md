@@ -1,25 +1,4 @@
-## Current setup (2026): 3x-ui + Xray behind a CDN, with automatic node rotation
-
-The setup I run now is described in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**:
-
-* one node at a time running 3x-ui + Xray, with one shared client record per person across all inbounds (shared quota, IP limit and expiry);
-* CDN-fronted VLESS inbounds (XHTTP, WebSocket, HTTPUpgrade, gRPC over TLS), plus ECH + clean-edge-IP variants for networks with aggressive SNI blocking;
-* a direct VLESS + REALITY inbound with a decoy SNI;
-* a subscription served through the CDN, so clients refresh instead of receiving new links;
-* automated rotation to a new region every 2 nights via provider APIs, with backup, restore, health checks, DNS switch and rollback ([rotation/](rotation)).
-
-```mermaid
-flowchart LR
-  U1[Clients: strict networks] -- ECH + clean edge IP --> CDN[(CDN<br/>cdn.example.com)]
-  U2[Clients: other networks] --> CDN
-  CDN --> N["Node: 3x-ui + Xray<br/>XHTTP / WS / HTTPUpgrade / gRPC + TLS<br/>subscription"]
-  U3[Clients: direct] -- REALITY --> N
-  R[rotate.py every 2 nights] -. backup / new node / DNS switch .-> N
-```
-
-The legacy V2Ray + STUNNEL + FRP guide follows below.
-
----
+> **Legacy (v1, 2024).** This branch preserves the V2Ray + STUNNEL + FRP setup. The current approach (3x-ui + Xray behind a CDN, with automatic node rotation) is on [`main`](https://github.com/amir-h-rassafi/v2ray-setup/tree/main).
 
 ## [V2Ray](https://www.v2ray.com/) Setup + STUNNEL + FRP [EASY SETUP](#easy-setup)
 (Before start check __other branches__ for other setups)

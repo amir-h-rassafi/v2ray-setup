@@ -22,7 +22,7 @@ else
 	systemctl restart stunnel*;
 	echo "Going to restart x-ui.service";
 	systemctl restart x-ui.service;
-	echo "Going to restart ns2.ns2ns2.com frps, x-ui, stunnel services";
+	echo "Going to restart {host} frps, x-ui, stunnel services";
 	ssh {user}@{host} "sudo systemctl restart frps.service"
 	ssh {user}@{host} "sudo systemctl restart x-ui.service"
 	ssh {user}@{host} "sudo systemctl restart stunnel4.service"
